@@ -1,0 +1,416 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// German (Germany) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_DUKE2               ICON    DISCARDABLE     "icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINMENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New...",                     ID_NEWFILE
+        MENUITEM "&Open...",                    ID_OPENFILE
+        MENUITEM "Import From &CMP...",         ID_OPENFROMCMP
+        MENUITEM "&Save",                       ID_SAVEFILE
+        MENUITEM "Save &As...",                 ID_SAVEFILEAS
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl + Z",             ID_UNDO, GRAYED
+        MENUITEM "&Redo\tCtrl + Y",             ID_REDO, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl + X",              ID_CUT, GRAYED
+        MENUITEM "&Copy\tCtrl + C",             ID_COPY, GRAYED
+        MENUITEM "&Paste\tCtrl + V",            ID_PASTE, GRAYED
+        MENUITEM "&Delete\tDel",                ID_DELETE, GRAYED
+        MENUITEM "Select A&ll\tCtrl + A",       ID_SELECTALL
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Show &Actors",                ID_SHOWACTORS, CHECKED
+        MENUITEM "Show &Masked Tiles in Level", ID_SHOWMASKED, CHECKED
+        MENUITEM "Show &Grid",                  ID_SHOWGRID
+        MENUITEM "Show Placement &Rectangle",   ID_SHOWHOVERRECT, CHECKED
+        MENUITEM SEPARATOR
+        MENUITEM "Show editing toolbox\tCtrl + T", ID_SHOWEDITOPS, CHECKED
+        MENUITEM "View Level &Overview",        ID_SHOWMAPOVERVIEW
+    END
+    POPUP "&Level"
+    BEGIN
+        MENUITEM "Level &properties",           ID_LEVELPROPS
+        MENUITEM "Level &info",                 ID_LEVELINFO
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help",                       ID_HELP
+        MENUITEM SEPARATOR
+        MENUITEM "&About",                      ID_ABOUT
+    END
+END
+
+IDR_POPUP MENU DISCARDABLE 
+BEGIN
+    POPUP "hg"
+    BEGIN
+        MENUITEM "Place &Solid Tiles",          ID_PLACESOLID, CHECKED
+        MENUITEM "Place &Masked Tiles",         ID_PLACEMASKED
+        MENUITEM "Place &Actors",               ID_PLACEACTORS
+        MENUITEM "Select D&ata",                ID_SELECT
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t",                        ID_CUT, GRAYED
+        MENUITEM "&Copy",                       ID_COPY, GRAYED
+        MENUITEM "&Paste",                      ID_PASTE, GRAYED
+        MENUITEM "&Delete",                     ID_DELETE, GRAYED
+        MENUITEM "Select A&ll",                 ID_SELECTALL
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CMPSPECIFY DIALOG DISCARDABLE  0, 0, 186, 236
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Specify CMP File Location"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,31,215,50,14,BS_VCENTER
+    PUSHBUTTON      "Cancel",IDCANCEL,103,215,50,14,BS_VCENTER
+    LTEXT           "Please specify the location of your Duke Nukem ][ CMP file. Duke2Edit needs this file to load various resources, including the level files.",
+                    IDC_STATIC,7,7,172,25
+    CONTROL         "Tree1",IDC_TREEDIRECTORYS,"SysTreeView32",
+                    TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT | 
+                    TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | WS_BORDER | 
+                    WS_TABSTOP,7,34,172,171
+END
+
+IDD_OPENFROMCMP DIALOG DISCARDABLE  0, 0, 163, 44
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Open From CMP..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,106,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,106,23,50,14
+    COMBOBOX        IDC_COMBOLEVELS,7,7,94,107,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_EDITOPS DIALOGEX 0, 0, 173, 249
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Toolbox"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBOACTORTYPE,16,28,138,153,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBOACTORS,16,55,138,89,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Actors",IDC_STATIC,7,7,159,152
+    CONTROL         "",IDC_ACTORPREVIEW,"Static",SS_BITMAP | SS_CENTERIMAGE,
+                    16,72,137,78,WS_EX_CLIENTEDGE
+    GROUPBOX        "",IDC_STATIC,7,164,159,77
+END
+
+IDD_LEVELPROPS DIALOGEX 0, 0, 459, 327
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Level Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,402,70,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,402,89,50,14
+    LTEXT           "Tileset (CZone)",IDC_STATIC,15,18,49,8
+    COMBOBOX        IDC_COMBOCZONE,15,28,78,67,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Backdrop Image",IDC_STATIC,15,47,53,8
+    COMBOBOX        IDC_COMBOBDROP,15,57,78,67,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Music",IDC_STATIC,15,75,20,8
+    COMBOBOX        IDC_COMBOMUSIC,15,86,78,67,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_BMPPREVIEWCZONE,"Static",SS_BITMAP,131,18,17,15,
+                    WS_EX_CLIENTEDGE
+    GROUPBOX        "General",IDC_STATIC,7,7,102,105
+    GROUPBOX        "Flags",IDC_STATIC,7,116,102,204
+    CONTROL         "Earthquake",IDC_CHECKEARTHQUAKE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,197,53,10
+    GROUPBOX        "Preview",IDC_STATIC,123,7,231,313
+    CONTROL         "",IDC_BMPPREVIEWBDROP,"Static",SS_BITMAP,131,164,17,15,
+                    WS_EX_CLIENTEDGE
+    CONTROL         "Background scrolling",IDC_CHECKBGSCROLL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,130,82,10
+    CONTROL         "Scrolling Horz/Vert",IDC_RADIOSCROLL1,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,25,144,75,10
+    CONTROL         "Scrolling Horz only",IDC_RADIOSCROLL2,"Button",
+                    BS_AUTORADIOBUTTON,25,157,74,10
+    CONTROL         "Autoscrolling Horz ",IDC_RADIOSCROLL3,"Button",
+                    BS_AUTORADIOBUTTON,25,170,75,10
+    CONTROL         "Autoscrolling Vert",IDC_RADIOSCROLL4,"Button",
+                    BS_AUTORADIOBUTTON,25,183,71,10
+    CONTROL         "Change Backdrop",IDC_CHECKCHANGEBG,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,209,73,10
+    CONTROL         "When an ""electric current door"" gets destroyed",
+                    IDC_RADIOCHGBG1,"Button",BS_AUTORADIOBUTTON | 
+                    BS_MULTILINE | WS_GROUP,25,222,76,25
+    CONTROL         "When Duke teleports",IDC_RADIOCHGBG2,"Button",
+                    BS_AUTORADIOBUTTON,25,252,80,10
+    LTEXT           "Change to Backdrop:",IDC_TEXTCHGBG,25,265,68,8
+    COMBOBOX        IDC_COMBOCHGBG,25,276,78,67,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Preview Backdrop image to be changed to",
+                    IDC_CHECKPREVIEWCHGBG,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,131,293,151,10
+    GROUPBOX        "Size",IDC_STATIC,363,7,89,58
+    COMBOBOX        IDC_COMBOLEVELWIDTH,370,31,52,80,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Width:",IDC_STATIC,370,20,22,8
+    LTEXT           "Height:",IDC_STATIC,370,49,24,8
+    LTEXT           "",IDC_TEXTLVLHEIGHT,396,49,28,8
+END
+
+IDD_LEVELINFO DIALOG DISCARDABLE  0, 0, 183, 74
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Level information"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,67,53,50,14
+    LTEXT           "Number of actors:",IDC_STATIC,7,38,57,8
+    LTEXT           "Width:",IDC_STATIC,7,7,22,8
+    LTEXT           "Height:",IDC_STATIC,79,7,24,8
+    LTEXT           "Total number of tiles:",IDC_STATIC,7,28,66,8
+    LTEXT           "Solid tiles:",IDC_STATIC,7,17,32,8
+    LTEXT           "Masked tiles:",IDC_STATIC,79,17,42,8
+    LTEXT           "Static",IDC_TEXTLVLWIDTH,32,7,39,8
+    LTEXT           "Static",IDC_TEXTLVLHEIGHT2,104,7,41,8
+    LTEXT           "Static",IDC_TEXTNRTILES,75,28,35,8
+    LTEXT           "Static",IDC_TEXTNRACTORS,66,38,34,8
+    LTEXT           "Static",IDC_TEXTNRSOLIDTILES,42,17,35,8
+    LTEXT           "Static",IDC_TEXTNRMASKEDTILES,123,17,38,8
+END
+
+IDD_SAVEGAMEEDIT DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,129,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,129,24,50,14
+END
+
+IDD_LEVELOVERVIEW DIALOGEX 0, 0, 257, 153
+STYLE DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_TOOLWINDOW | WS_EX_CLIENTEDGE
+CAPTION "Level Overview"
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_CMPSPECIFY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 229
+    END
+
+    IDD_OPENFROMCMP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 156
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 37
+    END
+
+    IDD_EDITOPS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 166
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 242
+    END
+
+    IDD_LEVELPROPS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 452
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 320
+    END
+
+    IDD_LEVELINFO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 176
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 67
+    END
+
+    IDD_SAVEGAMEEDIT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR ACCELERATORS DISCARDABLE 
+BEGIN
+    "A",            ID_SELECTALL,           VIRTKEY, CONTROL, NOINVERT
+    "A",            ID_PREVTILE,            VIRTKEY, ALT, NOINVERT
+    "C",            ID_COPY,                VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_NEXTTILE,            VIRTKEY, ALT, NOINVERT
+    "S",            ID_LOWERTILE,           VIRTKEY, ALT, NOINVERT
+    "T",            ID_SHOWEDITOPS,         VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_PASTE,               VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_DELETE,              VIRTKEY, NOINVERT
+    "W",            ID_UPPERTILE,           VIRTKEY, ALT, NOINVERT
+    "X",            ID_CUT,                 VIRTKEY, CONTROL, NOINVERT
+    "Y",            ID_REDO,                VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_UNDO,                VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_DRAWTILE            CURSOR  DISCARDABLE     "cursor1.cur"
+IDC_MOVE                CURSOR  DISCARDABLE     "out\\move.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINTOOLBAR         BITMAP  DISCARDABLE     "toolbar1.bmp"
+IDB_LEVELSYMBOLS        BITMAP  DISCARDABLE     "Symbols.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINTOOLBAR TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_BUTTON40059
+    BUTTON      ID_BUTTON40044
+    BUTTON      ID_BUTTON40043
+    BUTTON      ID_BUTTON40049
+    BUTTON      ID_BUTTON40050
+    BUTTON      ID_BUTTON40051
+    BUTTON      ID_BUTTON40052
+    BUTTON      ID_BUTTON40053
+    BUTTON      ID_BUTTON40054
+    BUTTON      ID_BUTTON40056
+    BUTTON      ID_BUTTON40058
+    BUTTON      ID_BUTTON40042
+    BUTTON      ID_BUTTON40063
+    BUTTON      ID_BUTTON40060
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_EDITOPS DLGINIT
+BEGIN
+    IDC_COMBOACTORS, 0x403, 1, 0
+"\000" 
+    0
+END
+
+#endif    // German (Germany) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
