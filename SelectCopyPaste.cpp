@@ -5,308 +5,387 @@ SelectCopyPasteClass SelectCopyPaste;
 
 void SelectCopyPasteClass::Deselect(POINT* ScrollPos, Duke2Map* Level)
 {
-	if (FloatingSelection)
-	{
-		PasteFromFloatingSelection(Level);
-		delete FloatingSelection;
-		FloatingSelection = NULL;
-	}
+  if (FloatingSelection)
+  {
+    PasteFromFloatingSelection(Level);
+    delete FloatingSelection;
+    FloatingSelection = NULL;
+  }
 
-	SelectionActive = FALSE;
+  SelectionActive = FALSE;
 }
 
 BOOL SelectCopyPasteClass::FocusRectChange(POINT* Pos)
 {
-	if (!Dragging) return FALSE;
-	
-	Pos->x -= Pos->x%TILESIZE_EDITOR;
-	Pos->y -= Pos->y%TILESIZE_EDITOR;
-	
-	DrawFocusRect(hDCFocus, &FocusRect);
-	
-	FocusRect.left = FocusOrigin.x;
-	FocusRect.top = FocusOrigin.y;
-	FocusRect.right = Pos->x + TILESIZE_EDITOR;
-	FocusRect.bottom = Pos->y + TILESIZE_EDITOR;
+  if (!Dragging)
+    return FALSE;
 
-	if (Pos->x < FocusRect.left) 
-	{
-		FocusRect.left = FocusRect.right - TILESIZE_EDITOR;
-		FocusRect.right = FocusOrigin.x;
-	}
-	
-	if (Pos->y < FocusRect.top) 
-	{
-		FocusRect.top = FocusRect.bottom - TILESIZE_EDITOR;
-		FocusRect.bottom = FocusOrigin.y;
-	}
-	
-	DrawFocusRect(hDCFocus, &FocusRect);
+  Pos->x -= Pos->x % TILESIZE_EDITOR;
+  Pos->y -= Pos->y % TILESIZE_EDITOR;
 
-	return TRUE;
+  DrawFocusRect(hDCFocus, &FocusRect);
+
+  FocusRect.left = FocusOrigin.x;
+  FocusRect.top = FocusOrigin.y;
+  FocusRect.right = Pos->x + TILESIZE_EDITOR;
+  FocusRect.bottom = Pos->y + TILESIZE_EDITOR;
+
+  if (Pos->x < FocusRect.left)
+  {
+    FocusRect.left = FocusRect.right - TILESIZE_EDITOR;
+    FocusRect.right = FocusOrigin.x;
+  }
+
+  if (Pos->y < FocusRect.top)
+  {
+    FocusRect.top = FocusRect.bottom - TILESIZE_EDITOR;
+    FocusRect.bottom = FocusOrigin.y;
+  }
+
+  DrawFocusRect(hDCFocus, &FocusRect);
+
+  return TRUE;
 }
 
-BOOL SelectCopyPasteClass::SelectionFinished(HWND hWndFD, POINT* ScrollPos, Duke2Map* Level, BOOL* Pasted)
+BOOL SelectCopyPasteClass::SelectionFinished(
+  HWND hWndFD,
+  POINT* ScrollPos,
+  Duke2Map* Level,
+  BOOL* Pasted)
 {
-	if (Pasted) *Pasted = FALSE;
-	
-	if (MovingSelection)
-	{
-		MovingSelection = FALSE;
-		FloatingSelDst = FocusRect;
-		OffsetRect(&FloatingSelDst, StartScrollPos.x*TILESIZE_EDITOR, StartScrollPos.y*TILESIZE_EDITOR);
-		return FALSE;
-	}
+  if (Pasted)
+    *Pasted = FALSE;
 
-	if (Dragging)
-	{
-		EndFocusDragging(hWndFD);
-		SelectionActive = FocusRect.right - FocusRect.left && FocusRect.bottom - FocusRect.top;
+  if (MovingSelection)
+  {
+    MovingSelection = FALSE;
+    FloatingSelDst = FocusRect;
+    OffsetRect(
+      &FloatingSelDst,
+      StartScrollPos.x * TILESIZE_EDITOR,
+      StartScrollPos.y * TILESIZE_EDITOR);
+    return FALSE;
+  }
 
-		if (FloatingSelection)
-		{
-			BOOL DidPaste = PasteFromFloatingSelection(Level);
+  if (Dragging)
+  {
+    EndFocusDragging(hWndFD);
+    SelectionActive =
+      FocusRect.right - FocusRect.left && FocusRect.bottom - FocusRect.top;
 
-			if (Pasted) *Pasted = DidPaste;
-		}
-		
-		if (SelectionActive)
-		{
-			FloatingSelDst = FocusRect;
-			SetRect(&FloatingSelOrigin, FocusRect.left/TILESIZE_EDITOR, FocusRect.top/TILESIZE_EDITOR, FocusRect.right/TILESIZE_EDITOR, FocusRect.bottom/TILESIZE_EDITOR);
-			OffsetRect(&FloatingSelOrigin, ScrollPos->x, ScrollPos->y);
-			CopyToFloatingSelection(ScrollPos, Level);
-			Delete(ScrollPos, Level);
-		}
+    if (FloatingSelection)
+    {
+      BOOL DidPaste = PasteFromFloatingSelection(Level);
 
-		return TRUE;
-	}
+      if (Pasted)
+        *Pasted = DidPaste;
+    }
 
-	return FALSE;
+    if (SelectionActive)
+    {
+      FloatingSelDst = FocusRect;
+      SetRect(
+        &FloatingSelOrigin,
+        FocusRect.left / TILESIZE_EDITOR,
+        FocusRect.top / TILESIZE_EDITOR,
+        FocusRect.right / TILESIZE_EDITOR,
+        FocusRect.bottom / TILESIZE_EDITOR);
+      OffsetRect(&FloatingSelOrigin, ScrollPos->x, ScrollPos->y);
+      CopyToFloatingSelection(ScrollPos, Level);
+      Delete(ScrollPos, Level);
+    }
+
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
-void SelectCopyPasteClass::BeginFocusDragging(POINT* Pos, POINT* ScrollPos, HWND hWndFD)
+void SelectCopyPasteClass::BeginFocusDragging(
+  POINT* Pos,
+  POINT* ScrollPos,
+  HWND hWndFD)
 {
-	if (PointInSelection(Pos, ScrollPos)) 
-	{
-		MovingSelection = TRUE;
-		return;
-	}
-	
-	Dragging = TRUE;
-	SetRect(&FocusRect, Pos->x/TILESIZE_EDITOR * TILESIZE_EDITOR, Pos->y/TILESIZE_EDITOR * TILESIZE_EDITOR, 0, 0);
-	FocusRect.right = FocusRect.left;
-	FocusRect.bottom = FocusRect.top;		
-	hDCFocus = GetDC(hWndFD);
-	DrawFocusRect(hDCFocus, &FocusRect);
-	FocusOrigin.x = FocusRect.left; 
-	FocusOrigin.y = FocusRect.top;
+  if (PointInSelection(Pos, ScrollPos))
+  {
+    MovingSelection = TRUE;
+    return;
+  }
+
+  Dragging = TRUE;
+  SetRect(
+    &FocusRect,
+    Pos->x / TILESIZE_EDITOR * TILESIZE_EDITOR,
+    Pos->y / TILESIZE_EDITOR * TILESIZE_EDITOR,
+    0,
+    0);
+  FocusRect.right = FocusRect.left;
+  FocusRect.bottom = FocusRect.top;
+  hDCFocus = GetDC(hWndFD);
+  DrawFocusRect(hDCFocus, &FocusRect);
+  FocusOrigin.x = FocusRect.left;
+  FocusOrigin.y = FocusRect.top;
 }
 
 void SelectCopyPasteClass::KillFloatingSelection(void)
 {
-	delete FloatingSelection;
-	FloatingSelection = NULL;
-	SelectionActive = FALSE;
+  delete FloatingSelection;
+  FloatingSelection = NULL;
+  SelectionActive = FALSE;
 
-	if (!FloatingSelIsFromClipboard)
-	{
-		AddUndoState(&FloatingSelOrigin, DelUndoBefore);
-		AddUndoState(&FloatingSelOrigin, DelUndoAfter);
-		delete DelUndoBefore;
-		delete DelUndoAfter;
-		DelUndoBefore = NULL;
-		DelUndoAfter = NULL;
-	}
+  if (!FloatingSelIsFromClipboard)
+  {
+    AddUndoState(&FloatingSelOrigin, DelUndoBefore);
+    AddUndoState(&FloatingSelOrigin, DelUndoAfter);
+    delete DelUndoBefore;
+    delete DelUndoAfter;
+    DelUndoBefore = NULL;
+    DelUndoAfter = NULL;
+  }
 }
 
-void SelectCopyPasteClass::CopyToFloatingSelection(POINT* ScrollPos, Duke2Map* Level)
+void SelectCopyPasteClass::CopyToFloatingSelection(
+  POINT* ScrollPos,
+  Duke2Map* Level)
 {
-	RECT CellsPos = { FocusRect.left/TILESIZE_EDITOR, FocusRect.top/TILESIZE_EDITOR, FocusRect.right/TILESIZE_EDITOR, FocusRect.bottom/TILESIZE_EDITOR };	
-	OffsetRect(&CellsPos, ScrollPos->x, ScrollPos->y);
-	OffsetRect(&FloatingSelDst, ScrollPos->x*TILESIZE_EDITOR, ScrollPos->y*TILESIZE_EDITOR);
-	StartScrollPos = *ScrollPos;
-	LevelCell Cell;
-	delete FloatingSelection;
-	
-	FloatingSelection = new LevelCell[(CellsPos.right - CellsPos.left)*(CellsPos.bottom - CellsPos.top)];
+  RECT CellsPos = {
+    FocusRect.left / TILESIZE_EDITOR,
+    FocusRect.top / TILESIZE_EDITOR,
+    FocusRect.right / TILESIZE_EDITOR,
+    FocusRect.bottom / TILESIZE_EDITOR};
+  OffsetRect(&CellsPos, ScrollPos->x, ScrollPos->y);
+  OffsetRect(
+    &FloatingSelDst,
+    ScrollPos->x * TILESIZE_EDITOR,
+    ScrollPos->y * TILESIZE_EDITOR);
+  StartScrollPos = *ScrollPos;
+  LevelCell Cell;
+  delete FloatingSelection;
 
-	for (int y=CellsPos.top; y<CellsPos.bottom; y++)
-	{
-		for (int x=CellsPos.left; x<CellsPos.right; x++)
-		{
-			POINT Pos = { x, y };
-			Level->GetCellAttributes(&Pos, &Cell);
-			//Cell.Actor = FALSE;
-			//Cell.ActorID = 0;
-			FloatingSelection[x-CellsPos.left + (y-CellsPos.top)*(CellsPos.right - CellsPos.left)] = Cell;
-		}
-	}
+  FloatingSelection = new LevelCell
+    [(CellsPos.right - CellsPos.left) * (CellsPos.bottom - CellsPos.top)];
 
-	FloatingSelIsFromClipboard = FALSE;
+  for (int y = CellsPos.top; y < CellsPos.bottom; y++)
+  {
+    for (int x = CellsPos.left; x < CellsPos.right; x++)
+    {
+      POINT Pos = {x, y};
+      Level->GetCellAttributes(&Pos, &Cell);
+      // Cell.Actor = FALSE;
+      // Cell.ActorID = 0;
+      FloatingSelection
+        [x - CellsPos.left +
+         (y - CellsPos.top) * (CellsPos.right - CellsPos.left)] = Cell;
+    }
+  }
+
+  FloatingSelIsFromClipboard = FALSE;
 }
 
 BOOL SelectCopyPasteClass::PasteFromFloatingSelection(Duke2Map* Level)
 {
-	RECT CellsPos = { FloatingSelDst.left/TILESIZE_EDITOR, FloatingSelDst.top/TILESIZE_EDITOR, FloatingSelDst.right/TILESIZE_EDITOR, FloatingSelDst.bottom/TILESIZE_EDITOR };	
-	LevelCell Cell;
+  RECT CellsPos = {
+    FloatingSelDst.left / TILESIZE_EDITOR,
+    FloatingSelDst.top / TILESIZE_EDITOR,
+    FloatingSelDst.right / TILESIZE_EDITOR,
+    FloatingSelDst.bottom / TILESIZE_EDITOR};
+  LevelCell Cell;
 
-	POINT CellsPosSize = { CellsPos.right - CellsPos.left, CellsPos.bottom - CellsPos.top };
-	
-	LevelCell* UndoCellsBefore = new LevelCell[CellsPosSize.x*CellsPosSize.y];
-	LevelCell* UndoCellsAfter  = new LevelCell[CellsPosSize.x*CellsPosSize.y];
-	
-	for (int y=CellsPos.top; y<CellsPos.bottom; y++)
-	{
-		for (int x=CellsPos.left; x<CellsPos.right; x++)
-		{
-			POINT Pos = { x, y };
-			Level->GetCellAttributes(&Pos, &Cell);
-			UndoCellsBefore[x-CellsPos.left + (y-CellsPos.top)*CellsPosSize.x] = Cell;
-			Cell = FloatingSelection[x-CellsPos.left + (y-CellsPos.top)*CellsPosSize.x];
-			
-			Level->SetCellAttributes(&Pos, Cell.Solid, Cell.Masked, Cell.bMasked);
-			UndoCellsAfter[x-CellsPos.left + (y-CellsPos.top)*CellsPosSize.x] = Cell;
+  POINT CellsPosSize = {
+    CellsPos.right - CellsPos.left, CellsPos.bottom - CellsPos.top};
 
-			if (Cell.Actor) Level->SetActor(&Pos, Cell.Actor);
-			else Level->DeleteActor(&Pos);
-		}
-	}
-	
-	BOOL Res = FALSE;
+  LevelCell* UndoCellsBefore = new LevelCell[CellsPosSize.x * CellsPosSize.y];
+  LevelCell* UndoCellsAfter = new LevelCell[CellsPosSize.x * CellsPosSize.y];
 
-	if (!FloatingSelIsFromClipboard)
-	{
-		if (!EqualRect(&CellsPos, &FloatingSelOrigin))
-		{
-			AddUndoState(&FloatingSelOrigin, DelUndoBefore, TRUE);
-			AddUndoState(&FloatingSelOrigin, DelUndoAfter);
-			AddUndoState(&CellsPos, UndoCellsBefore);
-			AddUndoState(&CellsPos, UndoCellsAfter, TRUE);
-			delete DelUndoBefore;
-			delete DelUndoAfter;
-			DelUndoBefore = NULL;
-			DelUndoAfter = NULL;
-			Res = TRUE;
-		}
-	}
-	else
-	{
-		AddUndoState(&CellsPos, UndoCellsBefore);
-		AddUndoState(&CellsPos, UndoCellsAfter);
-		Res = TRUE;
-	}
-	
-	delete UndoCellsBefore;
-	delete UndoCellsAfter;
-	delete FloatingSelection;
-	FloatingSelection = NULL;
-	
-	return Res;
+  for (int y = CellsPos.top; y < CellsPos.bottom; y++)
+  {
+    for (int x = CellsPos.left; x < CellsPos.right; x++)
+    {
+      POINT Pos = {x, y};
+      Level->GetCellAttributes(&Pos, &Cell);
+      UndoCellsBefore[x - CellsPos.left + (y - CellsPos.top) * CellsPosSize.x] =
+        Cell;
+      Cell = FloatingSelection
+        [x - CellsPos.left + (y - CellsPos.top) * CellsPosSize.x];
+
+      Level->SetCellAttributes(&Pos, Cell.Solid, Cell.Masked, Cell.bMasked);
+      UndoCellsAfter[x - CellsPos.left + (y - CellsPos.top) * CellsPosSize.x] =
+        Cell;
+
+      if (Cell.Actor)
+        Level->SetActor(&Pos, Cell.Actor);
+      else
+        Level->DeleteActor(&Pos);
+    }
+  }
+
+  BOOL Res = FALSE;
+
+  if (!FloatingSelIsFromClipboard)
+  {
+    if (!EqualRect(&CellsPos, &FloatingSelOrigin))
+    {
+      AddUndoState(&FloatingSelOrigin, DelUndoBefore, TRUE);
+      AddUndoState(&FloatingSelOrigin, DelUndoAfter);
+      AddUndoState(&CellsPos, UndoCellsBefore);
+      AddUndoState(&CellsPos, UndoCellsAfter, TRUE);
+      delete DelUndoBefore;
+      delete DelUndoAfter;
+      DelUndoBefore = NULL;
+      DelUndoAfter = NULL;
+      Res = TRUE;
+    }
+  }
+  else
+  {
+    AddUndoState(&CellsPos, UndoCellsBefore);
+    AddUndoState(&CellsPos, UndoCellsAfter);
+    Res = TRUE;
+  }
+
+  delete UndoCellsBefore;
+  delete UndoCellsAfter;
+  delete FloatingSelection;
+  FloatingSelection = NULL;
+
+  return Res;
 }
 
 void SelectCopyPasteClass::Copy(HWND hWndCB, POINT* ScrollPos)
 {
-	OpenClipboard(hWndCB);
-	EmptyClipboard();
+  OpenClipboard(hWndCB);
+  EmptyClipboard();
 
-	RECT CellsPos = { FocusRect.left/TILESIZE_EDITOR, FocusRect.top/TILESIZE_EDITOR, FocusRect.right/TILESIZE_EDITOR, FocusRect.bottom/TILESIZE_EDITOR };
-	OffsetRect(&CellsPos, ScrollPos->x, ScrollPos->y);
+  RECT CellsPos = {
+    FocusRect.left / TILESIZE_EDITOR,
+    FocusRect.top / TILESIZE_EDITOR,
+    FocusRect.right / TILESIZE_EDITOR,
+    FocusRect.bottom / TILESIZE_EDITOR};
+  OffsetRect(&CellsPos, ScrollPos->x, ScrollPos->y);
 
-	int DataSize = sizeof(RECT) + sizeof(LevelCell)*(CellsPos.right - CellsPos.left)*(CellsPos.bottom - CellsPos.top);
-	hClipboardData = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE, DataSize);
-	BYTE* RawData = (BYTE*)GlobalLock(hClipboardData);
-	memcpy(RawData, &CellsPos, sizeof(RECT));
-	LevelCell* Data = (LevelCell*)(RawData + sizeof(RECT));
+  int DataSize = sizeof(RECT) +
+    sizeof(LevelCell) * (CellsPos.right - CellsPos.left) *
+      (CellsPos.bottom - CellsPos.top);
+  hClipboardData = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE, DataSize);
+  BYTE* RawData = (BYTE*)GlobalLock(hClipboardData);
+  memcpy(RawData, &CellsPos, sizeof(RECT));
+  LevelCell* Data = (LevelCell*)(RawData + sizeof(RECT));
 
-	for (int y=CellsPos.top; y<CellsPos.bottom; y++)
-	{
-		for (int x=CellsPos.left; x<CellsPos.right; x++)
-		{
-			int index = x-CellsPos.left + (y-CellsPos.top)*(CellsPos.right - CellsPos.left);
-			Data[index] = FloatingSelection[index];
-		}
-	}
+  for (int y = CellsPos.top; y < CellsPos.bottom; y++)
+  {
+    for (int x = CellsPos.left; x < CellsPos.right; x++)
+    {
+      int index = x - CellsPos.left +
+        (y - CellsPos.top) * (CellsPos.right - CellsPos.left);
+      Data[index] = FloatingSelection[index];
+    }
+  }
 
-	GlobalUnlock(hClipboardData);
+  GlobalUnlock(hClipboardData);
 
-	SetClipboardData(CLIPBOARDFORMAT_ID, hClipboardData);
-	CloseClipboard();
-	CheckClipboardDataAvailability(hWndCB);
+  SetClipboardData(CLIPBOARDFORMAT_ID, hClipboardData);
+  CloseClipboard();
+  CheckClipboardDataAvailability(hWndCB);
 }
 
-BOOL SelectCopyPasteClass::Paste(HWND hWndCB, POINT* ScrollPos, POINT* LastHoveredTile, Duke2Map* Map)
+BOOL SelectCopyPasteClass::Paste(
+  HWND hWndCB,
+  POINT* ScrollPos,
+  POINT* LastHoveredTile,
+  Duke2Map* Map)
 {
-	BOOL Res = FALSE;
-	
-	RECT CellsPos;
-	
-	OpenClipboard(hWndCB);
-	HGLOBAL hData = GetClipboardData(CLIPBOARDFORMAT_ID);
-	
-	BYTE* RawData = (BYTE*)GlobalLock(hData);
+  BOOL Res = FALSE;
 
-	memcpy(&CellsPos, RawData, sizeof(RECT));
+  RECT CellsPos;
 
-	POINT CellsPosSize = { CellsPos.right - CellsPos.left, CellsPos.bottom - CellsPos.top };
-	SetRect(&CellsPos, LastHoveredTile->x, LastHoveredTile->y, LastHoveredTile->x + CellsPosSize.x, LastHoveredTile->y + CellsPosSize.y);
-	OffsetRect(&CellsPos, -ScrollPos->x, -ScrollPos->y);
+  OpenClipboard(hWndCB);
+  HGLOBAL hData = GetClipboardData(CLIPBOARDFORMAT_ID);
 
-	if (FloatingSelection)
-	{
-		Res = PasteFromFloatingSelection(Map);
-		delete FloatingSelection;
-	}
-	
-	FloatingSelection = new LevelCell[CellsPosSize.x*CellsPosSize.y];
-	LevelCell* Data = (LevelCell*)(RawData + sizeof(RECT));
+  BYTE* RawData = (BYTE*)GlobalLock(hData);
 
-	for (int y=CellsPos.top; y<CellsPos.bottom; y++)
-	{
-		for (int x=CellsPos.left; x<CellsPos.right; x++)
-		{
-			int index = x-CellsPos.left + (y-CellsPos.top)*CellsPosSize.x;
-			FloatingSelection[index] = Data[index]; 
-		}
-	}
+  memcpy(&CellsPos, RawData, sizeof(RECT));
 
-	GlobalUnlock(hClipboardData);
-	CloseClipboard();
-	SelectionActive = TRUE;
-	SetRect(&FocusRect, CellsPos.left*TILESIZE_EDITOR, CellsPos.top*TILESIZE_EDITOR, CellsPos.right*TILESIZE_EDITOR, CellsPos.bottom*TILESIZE_EDITOR);
-	FloatingSelDst = FocusRect;
-	StartScrollPos = *ScrollPos;
-	FloatingSelIsFromClipboard = TRUE;
-	OffsetRect(&FloatingSelDst, ScrollPos->x*TILESIZE_EDITOR, ScrollPos->y*TILESIZE_EDITOR);
+  POINT CellsPosSize = {
+    CellsPos.right - CellsPos.left, CellsPos.bottom - CellsPos.top};
+  SetRect(
+    &CellsPos,
+    LastHoveredTile->x,
+    LastHoveredTile->y,
+    LastHoveredTile->x + CellsPosSize.x,
+    LastHoveredTile->y + CellsPosSize.y);
+  OffsetRect(&CellsPos, -ScrollPos->x, -ScrollPos->y);
 
-	return Res;
+  if (FloatingSelection)
+  {
+    Res = PasteFromFloatingSelection(Map);
+    delete FloatingSelection;
+  }
+
+  FloatingSelection = new LevelCell[CellsPosSize.x * CellsPosSize.y];
+  LevelCell* Data = (LevelCell*)(RawData + sizeof(RECT));
+
+  for (int y = CellsPos.top; y < CellsPos.bottom; y++)
+  {
+    for (int x = CellsPos.left; x < CellsPos.right; x++)
+    {
+      int index = x - CellsPos.left + (y - CellsPos.top) * CellsPosSize.x;
+      FloatingSelection[index] = Data[index];
+    }
+  }
+
+  GlobalUnlock(hClipboardData);
+  CloseClipboard();
+  SelectionActive = TRUE;
+  SetRect(
+    &FocusRect,
+    CellsPos.left * TILESIZE_EDITOR,
+    CellsPos.top * TILESIZE_EDITOR,
+    CellsPos.right * TILESIZE_EDITOR,
+    CellsPos.bottom * TILESIZE_EDITOR);
+  FloatingSelDst = FocusRect;
+  StartScrollPos = *ScrollPos;
+  FloatingSelIsFromClipboard = TRUE;
+  OffsetRect(
+    &FloatingSelDst,
+    ScrollPos->x * TILESIZE_EDITOR,
+    ScrollPos->y * TILESIZE_EDITOR);
+
+  return Res;
 }
 
 void SelectCopyPasteClass::Delete(POINT* ScrollPos, Duke2Map* Level)
 {
-	RECT CellsPos = { FocusRect.left/TILESIZE_EDITOR, FocusRect.top/TILESIZE_EDITOR, FocusRect.right/TILESIZE_EDITOR, FocusRect.bottom/TILESIZE_EDITOR };
-	LevelCell Cell;
-	
-	POINT CellsPosSize = { CellsPos.right - CellsPos.left, CellsPos.bottom - CellsPos.top };	
+  RECT CellsPos = {
+    FocusRect.left / TILESIZE_EDITOR,
+    FocusRect.top / TILESIZE_EDITOR,
+    FocusRect.right / TILESIZE_EDITOR,
+    FocusRect.bottom / TILESIZE_EDITOR};
+  LevelCell Cell;
 
-	delete DelUndoBefore;
-	delete DelUndoAfter;
-	DelUndoBefore = new LevelCell[CellsPosSize.x*CellsPosSize.y];
-	DelUndoAfter  = new LevelCell[CellsPosSize.x*CellsPosSize.y];
-	
-	OffsetRect(&CellsPos, ScrollPos->x, ScrollPos->y);
-	
-	for (int y=CellsPos.top; y<CellsPos.bottom; y++)
-	{
-		for (int x=CellsPos.left; x<CellsPos.right; x++)
-		{
-			POINT Pos = { x, y };
-			Level->GetCellAttributes(&Pos, &Cell);
-			DelUndoBefore[x-CellsPos.left + (y-CellsPos.top)*CellsPosSize.x] = Cell;
-			Level->SetCellAttributes(&Pos, Cell.Solid = 0, Cell.Masked = 0, Cell.bMasked = FALSE);
-			DelUndoAfter[x-CellsPos.left + (y-CellsPos.top)*CellsPosSize.x] = Cell;
-		}
-	}
+  POINT CellsPosSize = {
+    CellsPos.right - CellsPos.left, CellsPos.bottom - CellsPos.top};
 
-	SelectionActive = NULL != FloatingSelection;
+  delete DelUndoBefore;
+  delete DelUndoAfter;
+  DelUndoBefore = new LevelCell[CellsPosSize.x * CellsPosSize.y];
+  DelUndoAfter = new LevelCell[CellsPosSize.x * CellsPosSize.y];
+
+  OffsetRect(&CellsPos, ScrollPos->x, ScrollPos->y);
+
+  for (int y = CellsPos.top; y < CellsPos.bottom; y++)
+  {
+    for (int x = CellsPos.left; x < CellsPos.right; x++)
+    {
+      POINT Pos = {x, y};
+      Level->GetCellAttributes(&Pos, &Cell);
+      DelUndoBefore[x - CellsPos.left + (y - CellsPos.top) * CellsPosSize.x] =
+        Cell;
+      Level->SetCellAttributes(
+        &Pos, Cell.Solid = 0, Cell.Masked = 0, Cell.bMasked = FALSE);
+      DelUndoAfter[x - CellsPos.left + (y - CellsPos.top) * CellsPosSize.x] =
+        Cell;
+    }
+  }
+
+  SelectionActive = NULL != FloatingSelection;
 }

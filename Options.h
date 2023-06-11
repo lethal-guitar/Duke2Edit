@@ -3,9 +3,8 @@
 
 class ProgOptions
 {
-	private:
-
-	public:
+private:
+public:
 };
 
 #endif

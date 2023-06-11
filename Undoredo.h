@@ -5,9 +5,9 @@
 
 struct URState
 {
-	RECT CellsPos;
-	LevelCell* Cells;
-	BOOL Link;
+  RECT CellsPos;
+  LevelCell* Cells;
+  BOOL Link;
 };
 
 BOOL Undo(Duke2Map* Map, BOOL CheckAvailabilityOnly = FALSE);

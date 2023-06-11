@@ -8,14 +8,14 @@
 const int MAX_ERRORS = 10;
 #endif
 
-const  char APPNAME[] = "Duke Nukem II Level Editor";
+const char APPNAME[] = "Duke Nukem II Level Editor";
 
 extern HINSTANCE hInstance;
-extern HWND      hWnd;
-//extern GuiClass  Gui;
+extern HWND hWnd;
+// extern GuiClass  Gui;
 
-int  Error(char*, ...);
-int  Message(char*, UINT = MB_OK, ...);
+int Error(char*, ...);
+int Message(char*, UINT = MB_OK, ...);
 BOOL GetArg(UINT Nr, char* Dst, UINT* Len);
 void ProcessCmdLine(void);
 void SizeStatusbarParts(void);

@@ -3,56 +3,61 @@
 
 #pragma warning(disable : 4786)
 
-#include <windows.h>
 #include <map>
 #include <string>
+#include <windows.h>
 
 using namespace std;
 
 struct CMP_DirectoryEntry
 {
-	char  FileName[12];
-	DWORD FileOffset;
-	DWORD FileSize;
+  char FileName[12];
+  DWORD FileOffset;
+  DWORD FileSize;
 };
 
 enum FILETYPE
 {
-	TYPE_IMF,
-	TYPE_PAL,
-	TYPE_CZONE,
-	TYPE_FULLSCREENIMG,
-	TYPE_BGDROP,
-	TYPE_DOSTEXT,
-	TYPE_VOC,
-	TYPE_LEVEL,
-	TYPE_ASCIITEXT,
-	TYPE_UNKNOWN
+  TYPE_IMF,
+  TYPE_PAL,
+  TYPE_CZONE,
+  TYPE_FULLSCREENIMG,
+  TYPE_BGDROP,
+  TYPE_DOSTEXT,
+  TYPE_VOC,
+  TYPE_LEVEL,
+  TYPE_ASCIITEXT,
+  TYPE_UNKNOWN
 };
 
 class CMP_File
 {
-	private:
-		map<string, CMP_DirectoryEntry*> Directory;
-		HANDLE hFile;
-		
-		void ClearDirectory(void);
-		BOOL CheckIfAscii(char* pTest, int Bytes);
-		BOOL CheckIfLevel(char* pTest);
+private:
+  map<string, CMP_DirectoryEntry*> Directory;
+  HANDLE hFile;
 
-		void StrToLower(char* Str);
-		void StrToLower(string& Str);
+  void ClearDirectory(void);
+  BOOL CheckIfAscii(char* pTest, int Bytes);
+  BOOL CheckIfLevel(char* pTest);
 
-	public:
-		~CMP_File() { Close(); }
+  void StrToLower(char* Str);
+  void StrToLower(string& Str);
 
-		BOOL Open(string FileName);
-		void Close(void) { ClearDirectory(); CloseHandle(hFile); hFile = NULL; }
-		int  GetNrFiles(void) { return Directory.size(); }
-		void GetFileNames(string Dst[]); 
-		int  GetFileSize(string Name);
-		BOOL GetFile(string Name, BYTE Dst[], int Bytes = 0, int Offset = 0);
-		FILETYPE DetermineFileType(string Name);
+public:
+  ~CMP_File() { Close(); }
+
+  BOOL Open(string FileName);
+  void Close(void)
+  {
+    ClearDirectory();
+    CloseHandle(hFile);
+    hFile = NULL;
+  }
+  int GetNrFiles(void) { return Directory.size(); }
+  void GetFileNames(string Dst[]);
+  int GetFileSize(string Name);
+  BOOL GetFile(string Name, BYTE Dst[], int Bytes = 0, int Offset = 0);
+  FILETYPE DetermineFileType(string Name);
 };
 
 #endif
