@@ -134,7 +134,7 @@ BOOL CMP_File::CheckIfAscii(char* pTest, int Bytes)
 
   for (int i = 0; i < Bytes; i++)
   {
-    if (!isalnum(pTest[i]))
+    if (!isalnum((unsigned char)pTest[i]))
     {
       if (++NrNotAscii >= 4)
       {

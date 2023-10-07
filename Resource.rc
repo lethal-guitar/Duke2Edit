@@ -353,7 +353,7 @@ END
 //
 
 IDC_DRAWTILE            CURSOR  DISCARDABLE     "cursor1.cur"
-IDC_MOVE                CURSOR  DISCARDABLE     "out\\move.cur"
+IDC_MOVE                CURSOR  DISCARDABLE     "move.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //

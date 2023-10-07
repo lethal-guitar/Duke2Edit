@@ -90,7 +90,8 @@ void OnInitDialog(HWND hDlg, WPARAM wParam, LPARAM lParam)
 
   int i = 0;
 
-  for (list<string>::iterator it = Params->CZoneList->begin();
+  list<string>::iterator it;
+  for (it = Params->CZoneList->begin();
        it != Params->CZoneList->end();
        it++, i++)
   {

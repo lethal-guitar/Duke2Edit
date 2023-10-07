@@ -143,25 +143,16 @@ public:
   void DrawSprite(
     LPDIRECT3DTEXTURE9 pSrcTexture,
     CONST RECT* pSrcRect,
-    CONST D3DXVECTOR2* pScaling,
-    CONST D3DXVECTOR2* pRotationCenter,
-    float Rotation,
     CONST D3DXVECTOR2* pTranslation,
     D3DCOLOR Color)
   {
-    lpSprite->Draw(
-      pSrcTexture,
-      pSrcRect,
-      pScaling,
-      pRotationCenter,
-      Rotation,
-      pTranslation,
-      Color);
+    D3DXVECTOR3 position{pTranslation->x, pTranslation->y, 0.0f};
+    lpSprite->Draw(pSrcTexture, pSrcRect, nullptr, &position, Color);
   }
   void BeginSprite(void)
   {
     if (lpSprite)
-      lpSprite->Begin();
+      lpSprite->Begin(0);
   }
   void EndSprite(void)
   {

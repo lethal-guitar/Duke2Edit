@@ -14,19 +14,19 @@ static void ConvertHeaderStrings(LevelHeader* Header, BOOL ConvertBack = FALSE)
 {
   if (ConvertBack)
   {
-    for (int i = 0; i < 12; i++)
+    for (auto i = 0; i < 12; i++)
     {
       if (!Header->CZone[i])
         Header->CZone[i] = 0x20;
     }
 
-    for (i = 0; i < 12; i++)
+    for (auto i = 0; i < 12; i++)
     {
       if (!Header->BGDrop[i])
         Header->BGDrop[i] = 0x20;
     }
 
-    for (i = 0; i < 12; i++)
+    for (auto i = 0; i < 12; i++)
     {
       if (!Header->Music[i])
         Header->Music[i] = 0x20;
@@ -41,13 +41,13 @@ static void ConvertHeaderStrings(LevelHeader* Header, BOOL ConvertBack = FALSE)
       Header->CZone[i] = 0;
   }
 
-  for (i = 0; i < strlen(Header->BGDrop); i++)
+  for (auto i = 0; i < strlen(Header->BGDrop); i++)
   {
     if (isspace(Header->BGDrop[i]))
       Header->BGDrop[i] = 0;
   }
 
-  for (i = 0; i < strlen(Header->Music); i++)
+  for (auto i = 0; i < strlen(Header->Music); i++)
   {
     if (isspace(Header->Music[i]))
       Header->Music[i] = 0;
@@ -270,7 +270,7 @@ BOOL LoadMultipleActorImages(char* Images, HBITMAP* Dst)
 
     strset(CurrentStr, 0);
 
-    for (i = 0; *Images != ','; i++, Images++)
+    for (auto i = 0; *Images != ','; i++, Images++)
       CurrentStr[i] = *Images;
 
     PixOffset.x = atoi(CurrentStr);
@@ -280,7 +280,7 @@ BOOL LoadMultipleActorImages(char* Images, HBITMAP* Dst)
 
     strset(CurrentStr, 0);
 
-    for (i = 0; *Images != ';' && *Images; i++, Images++)
+    for (auto i = 0; *Images != ';' && *Images; i++, Images++)
       CurrentStr[i] = *Images;
 
     PixOffset.y = atoi(CurrentStr);
@@ -337,7 +337,7 @@ BOOL LoadMultipleActorImages(char* Images, HBITMAP* Dst)
   for (int i = 0; i < ResultSize.x * ResultSize.y; i++)
     DestData[i] = 0xAAAAAA;
 
-  for (it = ImagesList.begin(); it != ImagesList.end(); it++)
+  for (auto it = ImagesList.begin(); it != ImagesList.end(); it++)
   {
     int MaxX = it->Size.x + it->Offset.x * 8,
         MaxY = it->Size.y + it->Offset.y * 8;
@@ -656,7 +656,7 @@ static BOOL LoadLevelToEditor(BYTE* Level, Duke2Map* DstMap)
   }
 
   int TileNrToModify = 0;
-  i = 0;
+  auto i = 0;
 
   while (i < ExtraInfoSize)
   {
@@ -836,7 +836,8 @@ static void GenerateTSI(Duke2Map* Level, list<BYTE>* TSIData)
           {
             int Diff = 0;
 
-            for (list<TSIEntry>::iterator it = EntrysCollected.begin();
+            list<TSIEntry>::iterator it;
+            for (it = EntrysCollected.begin();
                  !(*it).Count && it != EntrysCollected.end();
                  it++, Diff++)
               ;
@@ -938,7 +939,8 @@ static void GenerateTSI(Duke2Map* Level, list<BYTE>* TSIData)
     {
       int Diff = 0;
 
-      for (list<TSIEntry>::iterator it = EntrysCollected.begin();
+      list<TSIEntry>::iterator it; 
+      for (it = EntrysCollected.begin();
            !(*it).Count && it != EntrysCollected.end();
            it++, Diff++)
         ;

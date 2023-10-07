@@ -36,8 +36,9 @@ BOOL GuiClass::Init(void)
 
   TBButtons[3].fsStyle = TBButtons[7].fsStyle = TBButtons[10].fsStyle =
     TBButtons[14].fsStyle = TBButtons[15].fsStyle = TBSTYLE_SEP;
-
-  for (int i = 0; i < 3; i++)
+  
+  int i;
+  for (i = 0; i < 3; i++)
   {
     TBButtons[i].iBitmap = i + 1;
     TBButtons[i].fsState = TBSTATE_ENABLED;

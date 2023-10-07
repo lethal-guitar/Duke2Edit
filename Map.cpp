@@ -40,7 +40,8 @@ BOOL Duke2Map::GetCellAttributes(POINT* Pos, LevelCell* DstCell)
 
 void Duke2Map::ChangeWidth(WORD NewWidth)
 {
-  for (int i = 0; VALID_LEVEL_WIDTHS[i]; i++)
+  int i;
+  for (i = 0; VALID_LEVEL_WIDTHS[i]; i++)
     if (NewWidth == VALID_LEVEL_WIDTHS[i])
       break;
 

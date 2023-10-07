@@ -1,9 +1,18 @@
 #include "D3D.h"
 #include "Log.h"
 #include "Shared.h"
-#include <dxerr9.h>
 
 D3DManager D3D;
+
+static const char* GetDxErrorString(HRESULT hr)
+{
+  static char buffer[129];
+  FormatMessage(
+    FORMAT_MESSAGE_FROM_SYSTEM, nullptr, hr, 0, buffer, 128, nullptr);
+
+  return buffer;
+}
+
 
 BOOL D3DManager::Reset(HWND hWndDev, BOOL Windowed, DWORD ResX, DWORD ResY)
 {
@@ -118,7 +127,7 @@ BOOL D3DManager::Init(
     lpD3D9 = NULL;
     return Error(
       "D3DManager::Init(): IDirect3D9::CreateDevice() failed! Cause: %s",
-      DXGetErrorString9(hr));
+      GetDxErrorString(hr));
   }
 
   lpD3DDevice9->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &lpBackBuffer);
@@ -130,7 +139,7 @@ BOOL D3DManager::Init(
       CleanUp();
       return Error(
         "D3DManager::Init(): D3DXCreateSprite() failed! Cause: %s",
-        DXGetErrorString9(hr));
+        GetDxErrorString(hr));
     }
   }
 
@@ -139,7 +148,7 @@ BOOL D3DManager::Init(
     CleanUp();
     return Error(
       "D3DManager::Init(): D3DXCreateLine() failed! Cause: %s",
-      DXGetErrorString9(hr));
+      GetDxErrorString(hr));
   }
 
   lpLine->SetAntialias(FALSE);
@@ -202,7 +211,7 @@ const LPDIRECT3DSURFACE9 D3DManager::CreateSurface(
   {
     Error(
       "D3DManager::CreateSurface(): CreateOffScreenPlainSurface() failed! Cause: %s",
-      DXGetErrorString9(hr));
+      GetDxErrorString(hr));
     return NULL;
   }
 
@@ -264,7 +273,7 @@ const LPDIRECT3DSURFACE9 D3DManager::CreateSurfaceFromFile(
   {
     Error(
       "D3DManager::CreateSurfaceFromFile(): CreateOffScreenPlainSurface() failed! Cause: %s",
-      DXGetErrorString9(hr));
+      GetDxErrorString(hr));
     return NULL;
   }
 
@@ -280,7 +289,7 @@ const LPDIRECT3DSURFACE9 D3DManager::CreateSurfaceFromFile(
       lpD3DS->Release();
       Error(
         "D3DManager::CreateSurfaceFromFile(): CreateOffScreenPlainSurface() failed for temporary surface! Cause: %s",
-        DXGetErrorString9(hr));
+        GetDxErrorString(hr));
       return NULL;
     }
 
@@ -295,7 +304,7 @@ const LPDIRECT3DSURFACE9 D3DManager::CreateSurfaceFromFile(
         "D3DManager::CreateSurfaceFromFile(): D3DXLoadSurfaceFromFile failed on file "
         "%s"
         " for temporary surface! Cause: %s",
-        DXGetErrorString9(hr));
+        GetDxErrorString(hr));
       return NULL;
     }
 
@@ -340,7 +349,7 @@ const LPDIRECT3DSURFACE9 D3DManager::CreateSurfaceFromFile(
         "D3DManager::CreateSurfaceFromFile(): D3DXLoadSurfaceFromFile failed on file "
         "%s"
         "!Cause: %s",
-        DXGetErrorString9(hr));
+        GetDxErrorString(hr));
       return NULL;
     }
   }
@@ -415,7 +424,7 @@ const LPDIRECT3DSURFACE9 D3DManager::CreateSurfaceFromResource(
   {
     Error(
       "D3DManager::CreateSurfaceFromResource(): CreateOffScreenPlainSurface() failed! Cause: %s",
-      DXGetErrorString9(hr));
+      GetDxErrorString(hr));
     return NULL;
   }
 
@@ -487,7 +496,7 @@ BOOL D3DManager::LoadTexture(
       "D3DManager::LoadTexture(): D3DXCreateTextureFromFileEx() failed on file "
       "%s"
       "! Cause: %s",
-      DXGetErrorString9(hr));
+      GetDxErrorString(hr));
   }
 
   return TRUE;
@@ -531,7 +540,7 @@ const LPDIRECT3DTEXTURE9 D3DManager::CreateTexture(
   {
     Error(
       "D3DManager::CreateTexture(): CreateTexture() failed! Cause: %s",
-      DXGetErrorString9(hr));
+      GetDxErrorString(hr));
     return NULL;
   }
 
@@ -600,7 +609,8 @@ void D3DManager::ReleaseSurface(LPDIRECT3DSURFACE9 lpD3DS)
     return;
   }
 
-  for (USHORT i = 0; i < NrSurfacePtrs; i++)
+  USHORT i;
+  for (i = 0; i < NrSurfacePtrs; i++)
   {
     if (SurfacePtrs[i] == lpD3DS)
     {
@@ -620,7 +630,8 @@ void D3DManager::ReleaseSurface(LPDIRECT3DSURFACE9 lpD3DS)
   {
     if (SurfacePtrs[i + 1] != NULL)
     {
-      for (USHORT j = i; j < NrSurfacePtrs; j++)
+      USHORT j;
+      for (j = i; j < NrSurfacePtrs; j++)
       {
         SurfacePtrs[j] = SurfacePtrs[j + 1];
       }

@@ -2,7 +2,6 @@
 #include "D3D.h"
 #include "Shared.h"
 #include "resource.h"
-#include <dxerr9.h>
 
 Duke2Map Level;
 CMP_File CMP;
@@ -112,8 +111,7 @@ void DrawFloatingSelection(SelectCopyPasteClass* SCP, POINT* ScrollPos)
           rSrc.right = rSrc.left + TILESIZE_EDITOR;
           rSrc.bottom = rSrc.top + TILESIZE_EDITOR;
 
-          D3D.DrawSprite(
-            CZoneTex, &rSrc, &Scaling, NULL, 0, &Translation, 0xFFFFFFFF);
+          D3D.DrawSprite(CZoneTex, &rSrc, &Translation, 0xFFFFFFFF);
         }
       }
 
@@ -218,8 +216,7 @@ void DrawMap(POINT* ScrollPos, POINT* pPage, POINT* SelectedTile)
           rSrc.right = rSrc.left + TILESIZE_EDITOR;
           rSrc.bottom = rSrc.top + TILESIZE_EDITOR;
 
-          D3D.DrawSprite(
-            CZoneTex, &rSrc, &Scaling, NULL, 0, &Translation, 0xFFFFFFFF);
+          D3D.DrawSprite(CZoneTex, &rSrc, &Translation, 0xFFFFFFFF);
         }
       }
 
@@ -239,12 +236,12 @@ void DrawMap(POINT* ScrollPos, POINT* pPage, POINT* SelectedTile)
   {
     D3DXVECTOR2 Translation;
 
-    for (y = 0; y < GridRepetition.y; y++)
+    for (auto y = 0; y < GridRepetition.y; y++)
     {
       for (int x = 0; x < GridRepetition.x; x++)
       {
         Translation = D3DXVECTOR2(x * GridSize.x, y * GridSize.y);
-        D3D.DrawSprite(GridTex, NULL, NULL, NULL, 0, &Translation, 0xFFFFFFFF);
+        D3D.DrawSprite(GridTex, nullptr, &Translation, 0xFFFFFFFF);
       }
     }
   }
@@ -460,7 +457,7 @@ BOOL IsPowerOf2(long Val)
     if ((Val >> i) & 0x01)
       break;
 
-  for (i = c; i >= 0; i--)
+  for (auto i = c; i >= 0; i--)
     if ((Val >> (i - 1)) & 0x01)
       return FALSE;
 

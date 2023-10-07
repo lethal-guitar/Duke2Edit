@@ -3,6 +3,7 @@
 #include "Shared.h"
 #include "Log.h"
 #include <list>
+#include <string>
 #include <stdio.h>
 
 using namespace std;
