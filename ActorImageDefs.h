@@ -30,6 +30,9 @@ struct ACTORIMAGEINFO
   BOOL Masked;
 };
 
+
+// This is a redundant copy of data from ACTRINFO.MNI
+// See https://moddingwiki.shikadi.net/wiki/Duke_Nukem_II_Actor_Info
 const ACTORIMAGEINFO ActorImages[] = {
   {24, 32, 0, TRUE},        {24, 32, 480, TRUE},      {24, 32, 960, TRUE},
   {24, 32, 1440, TRUE},     {24, 32, 1920, TRUE},     {24, 32, 2400, TRUE},

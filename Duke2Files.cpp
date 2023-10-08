@@ -273,6 +273,9 @@ static BOOL LoadImageToEGA(WORD Id, EGASimulator* EGA)
 
 BOOL LoadMultipleActorImages(char* Images, HBITMAP* Dst)
 {
+  // This function parses the ImageId string of an ACTORNAMEINFO (see
+  // Constants.h), loads all the referenced images, and composites them into a
+  // single bitmap.
   char CurrentStr[16] = {0};
   WORD ImgId;
   POINT PixOffset;
@@ -677,6 +680,17 @@ static BOOL LoadLevelToEditor(BYTE* Level, Duke2Map* DstMap)
     }
   }
 
+  // To understand the purpose of the following code, first see comment in
+  // GenerateTSI().
+  //
+  // [REVIEW NOTE] It would probably be much easier to read the entire extra
+  // info into a buffer, RLE-decompress it, and then iterate over the resulting
+  // array to apply the extra bits to the map cells.
+  //
+  // Also compare:
+  //
+  // https://github.com/lethal-guitar/RigelEngine/blob/4d97e1e3582cdf6caa78e7d73b8865885793529d/src/assets/rle_compression.hpp#L56
+  // https://github.com/lethal-guitar/Duke2Reconstructed/blob/46c84c068bdcf0c6768c766902043c27c80ef49c/SRC/LVLUTIL2.C#L115
   int TileNrToModify = 0;
   auto i = 0;
 
@@ -821,6 +835,50 @@ BOOL LoadLevel(const char* FileName, Duke2Map* DstMap, BOOL LoadFromCMP)
 
 static void GenerateTSI(Duke2Map* Level, list<BYTE>* TSIData)
 {
+  // [REVIEW NOTE] This is an astonishingly convoluted function - a giant heap
+  // of spaghetti code. I have no clue anymore how it works. I'm honestly
+  // impressed by my 18-year old self for getting this working, but also glad
+  // I've learned a thing or two since then. The actual problem that this code
+  // solves is drastically simpler than it looks, and it could easily be written
+  // in a much simpler way.
+  //
+  // So here's the deal:
+  //
+  // In the game's level format, tiles can be single- or double-layered. Each
+  // tile is stored as a 16-bit unsigned integer. The most-significant bit
+  // being set indicates a composite (two-layer) tile. If it's set, the
+  // remaining 15 bits are split up into 10 bits for the background layer, and
+  // 5 bits for the foreground. 5 bits can only encode numbers up to 31, which
+  // was not enough for what the original designers wanted to do. The solution
+  // they came up with was to have a separate array of two additional bits per
+  // tile, with the values for 4 tiles (i.e. 8 bits) packed into one byte. This
+  // array is appended onto the end of the regular tile data in the level file,
+  // and then RLE-compressed to save space (the majority of tiles don't need
+  // the additional bits, and thus most of the array is 0 values).
+  //
+  // Also see:
+  // https://moddingwiki.shikadi.net/wiki/Duke_Nukem_II_Map_Format#Mapping_cell_values_to_tiles
+  // https://moddingwiki.shikadi.net/wiki/Duke_Nukem_II_Map_Format#Supplemental_foreground_data
+  //
+  // The code in this function is generating the RLE-compressed form of this
+  // array for writing into a level file. But back when I wrote this code, I
+  // didn't know what RLE compression was. I somehow managed to figure out how
+  // to read & write the data as expected by the game engine without really
+  // understanding the underlying principle, which is pretty impressive. But
+  // with the knowledge of what the data actually is, it also becomes much
+  // easier to write code for generating it.
+  //
+  // Basically, all that's needed is:
+  //
+  // * Create an array of 8188 bytes (LEVEL_DATA_WORDS / 4)
+  // * Iterate over all tiles in the level, for each one:
+  //   * If composite, extract 2 most significant bits of the foreground tile
+  //     index and add to the array
+  // * RLE-compress the array
+  //
+  // The code below combines the collection of the bits and the compression
+  // into a single loop, which adds to the complexity.
+
   POINT Pos;
   LevelCell Cell;
   TSIEntry Entry = {0}, LastEntry = {0};

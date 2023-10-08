@@ -52,10 +52,22 @@ enum FILETYPE
   TYPE_UNKNOWN
 };
 
+// This class implements the game's group file format.
+// See https://moddingwiki.shikadi.net/wiki/CMP_Format.
+//
+// For a much cleaner and more modern implementation, see:
+// https://github.com/lethal-guitar/RigelEngine/blob/4d97e1e3582cdf6caa78e7d73b8865885793529d/src/assets/cmp_file_package.hpp#L32
 class CMP_File
 {
 private:
+  // [REVIEW NOTE] It would be much better to hold the map entries by value, not
+  // by pointer. That would avoid a lot of manual memory management.
   map<string, CMP_DirectoryEntry*> Directory;
+
+  // [REVIEW NOTE] For some reason, this uses the Win32 file APIs instead of
+  // their standard library counterparts. Using a std::ifstream instead would
+  // simplify the code, make it platform-independent, and avoid the need for a
+  // destructor.
   HANDLE hFile;
 
   void ClearDirectory(void);
@@ -68,7 +80,10 @@ private:
 public:
   ~CMP_File() { Close(); }
 
+  // [REVIEW NOTE] Ideally, this should be the constructor to reduce the amount
+  // of state.
   BOOL Open(string FileName);
+
   void Close(void)
   {
     ClearDirectory();

@@ -64,6 +64,17 @@ const char ActorTypes[][16] = {
   "Misc",
   "\0"};
 
+
+// The ImageId member is a string describing a list of one or more sprite
+// images to display for a specific actor. The entries in the list are
+// separated by semicolons. Each entry consists of three comma-separated
+// numbers. The numbers are: Sprite ID, X offset, Y offset. Both offsets are in
+// tiles. The sprite ID is _not_ the same as the actor ID used to index the
+// ACTRINFO.MNI file. The latter has a hierarchical system, where an actor ID
+// refers to a "sprite" with one or more animation frames.
+//
+// The ID used here on the other hand is an index into the flattened list of
+// all sprite animation frames.
 const ACTORNAMEINFO ActorDefs[] = {
   {"Robot drone", AT_BADGUY, "0, 0, 0; 6, 0, 1;"}, // MULTIIMG
   {"??", AT_MISC, "0, 0, 0;"},
