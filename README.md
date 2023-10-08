@@ -8,10 +8,10 @@ Windows only, uses DirectX 9 and the Win32 API.
 I wrote this back in 2006 while still in highschool, so the code is quite messy and absolutely not up to my standards of today: Manual memory management, outdated paradigms, overcomplicated logic, poor structure, not cross-platform, etc.
 There are also some bugs and stability issues.
 It's overall still fairly functional though -
-it was successfully used during development of [Duke Nukem 1+2 Remastered for Evercade](https://evercade.co.uk/duke-nukem/).
+it was successfully used during development of [Duke Nukem 1+2 Remastered for Evercade](https://evercade.co.uk/duke-nukem/) to make tweaks to the existing levels like the example shown in [my blog post](https://lethalguitar.wordpress.com/2023/10/03/duke-nukem-12-remastered/).
 
 I've decided to release the code in case someone finds it
-useful, or wants to do develop it further.
+useful, or wants to develop it further.
 I don't have any intention to work on this myself,
 but I'm happy to try and answer any questions about the code if I can (I won't necessarily
 remember everything).
